@@ -5,6 +5,8 @@ from requests.auth import HTTPBasicAuth
 import json
 
 
+"""This function serves the purpose of the GET request to the wufoo form, using the secrets key to retrieve the 
+form submissions. Runs through a if statement for a status code if any errors occur."""
 def get_wufoo_data() -> dict:
     url = "http://mkurciviez.wufoo.com/api/v3/forms/cubess-project-proposal-submission/entries/json"
     response = requests.get(url, auth=HTTPBasicAuth(secrets.wufoo_key, 'pass'))
@@ -17,14 +19,15 @@ def get_wufoo_data() -> dict:
     return json_response
 
 
+"""Function will write data to a file, uses the json library to 'pretty print' the outputted data."""
 def write_data_to_file():
     with open("wufoo_data.txt", "w") as outfile:
-        json.dump(get_wufoo_data(), outfile, indent=2, sort_keys=True)
+        json.dump(get_wufoo_data(), outfile, indent=3, sort_keys=True)
 
 
 def print_file(file_name):
-    with open(file_name) as f:
-        print(f.read())
+    with open(file_name) as file:
+        print(file.read())
 
 
 if __name__ == '__main__':
