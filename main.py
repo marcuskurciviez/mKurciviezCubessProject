@@ -22,13 +22,14 @@ def get_wufoo_data() -> dict:
 """Function will write data to a file, uses the json library to 'pretty print' the outputted data."""
 def write_data_to_file():
     with open("wufoo_data.txt", "w") as outfile:
+        text = ["Marcus Kurciviez \n", "Wufoo Form Data \n"]
+        outfile.writelines(text)
         json.dump(get_wufoo_data(), outfile, indent=3, sort_keys=True)
 
-
-def print_file(file_name):
-    with open(file_name) as file:
-        print(file.read())
-
+def read_data():
+    f = open("wufoo_data.txt", "r")
+    print(f.readline())
 
 if __name__ == '__main__':
     write_data_to_file()
+    read_data()
