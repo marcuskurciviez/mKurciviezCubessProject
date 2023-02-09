@@ -9,11 +9,11 @@ from typing import Tuple
 
 """This function serves the purpose of the GET request to the wufoo form, using the secrets key to retrieve the 
 form submissions. Runs through a if statement for a status code if any errors occur."""
-def get_wufoo_data() -> dict:  # comment to test workflow
-    url = "http://mkurciviez.wufoo.com/api/v3/forms/cubess-project-proposal-submission/entries/json"
-    url = "https://jsantore.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json"
+def get_wufoo_data() -> list[dict]:  # comment to test workflow
+    url = "https://mkurciviez.wufoo.com/api/v3/forms/cubess-project-proposal-submission/entries/json"
+    # url = "https://jsantore.wufoo.com/api/v3/forms/cubes-project-proposal-submission/entries/json"
     response = requests.get(url, auth=HTTPBasicAuth(secrets.wufoo_key, 'pass'))
-    print(response.text)
+    # print(response.text)
 
     if response.status_code != 200:
         print(f"Data retrieval failed, response code: {response.status_code} with the error message: {response.reason}")
@@ -42,18 +42,56 @@ def close_db(connection:sqlite3.Connection):
     connection.commit()
     connection.close()
 
-def main():
-    conn, cursor = open_db("test_db.sqlite")
-    print(type(conn))
-    close_db(conn)
+def create_wufoo_table(cursor: sqlite3.Cursor):
+    cursor.execute('''CREATE TABLE IF NOT EXISTS wufootest(
+    EntryID integer primary key,
+    Prefix text,
+    First_Name text,
+    Last_Name text,
+    Title text,
+    Organization_Name text,
+    Email text,
+    Organization_Website text,
+    Phone_Number text,
+    Course_Project text,
+    Guest_Speaker text,
+    Site_Visit text,
+    Job_Shadow text,
+    Internships text,
+    Career_Panel text,
+    Networking_Event text,
+    Summer_2022 text,
+    Fall_2022 text,
+    Spring_2023 text,
+    Summer_2023 text,
+    Other text,
+    Permission_to_share text
+    CreatedBy text,
+    DateUpdated text,
+    DateCreated text''')
+
+def create_table(db_cursor: sqlite3.Cursor):
+    create_wufoo_table(db_cursor)
+
+def put_wufoo_data_in(table: str, data_to_add: list[tuple], db_cursor: sqlite3.Cursor):
+    db_cursor.executemany(f"""INSERT INTO {table}(EntryId, Prefix, First_Name, Last_Name, Title, Organization_Name, Email, Organization_Website, Phone_Number,
+    Course_Project, Guest_Speaker, Site_Visit, Job_Shadow, Internships, Career_Panel, Networking_Event, Summer_2022, Fall_2022, Spring_2023, Summer_2023, Other,
+    Permission_to_share, CreatedBy, DateUpdated, DateCreated)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", data_to_add)
+
+
+# def main():
+#     conn, cursor = open_db("test_db.sqlite")
+#     print(type(conn))
+#     close_db(conn)
 
 def write_wufoo_data():
     conn = sqlite3.connect('wufoo.db')
     cur = conn.cursor()
 
-    cur.execute('''CREATE TABLE IF NOT EXISTS wufoo
+    cur.execute('''CREATE TABLE IF NOT EXISTS wufoo_data
             (
-            EntryID integer,
+            EntryID integer primary key,
             Prefix text,
             First_Name text,
             Last_Name text,
@@ -82,7 +120,7 @@ def write_wufoo_data():
     get_data = get_wufoo_data()
 
     for item in get_data:
-        cur.execute("INSERT INTO wufoo VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        cur.execute("INSERT INTO wufoo_data VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     (item['EntryId'],
                      item.get('Field1', ''), #Prefix
                      item.get('Field4', ''), #FirstName
@@ -107,9 +145,11 @@ def write_wufoo_data():
                      item.get('Field213', ''), #Permission
                      item.get('CreatedBy', ''),
                      item.get('DateUpdated', '')))
+
+
     conn.commit()
     conn.close()
 if __name__ == '__main__':
     write_wufoo_data()
-    # write_data_to_file()
+    # get_wufoo_data()
     # read_data()
