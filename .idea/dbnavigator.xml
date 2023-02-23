@@ -17,6 +17,9 @@
   <component name="DBNavigator.Project.EditorStateManager">
     <last-used-providers />
   </component>
+  <component name="DBNavigator.Project.FileConnectionMappingManager">
+    <mapping file-url="file://$APPLICATION_CONFIG_DIR$/consoles/db/94177175-6426-4e91-b1dc-d87a2c145281/console.sql" connection-id="virtual-sqlite-connection" session-id="" current-schema="" />
+  </component>
   <component name="DBNavigator.Project.Settings">
     <connections />
     <browser-settings>
