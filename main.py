@@ -2,7 +2,7 @@ from database import open_db, close_db
 import database
 import getWufooData
 
-db_name = "cubes_Project.sqlite"
+db_name = "cubesProject.sqlite"
 
 
 def main():

@@ -16,7 +16,7 @@ def close_db(connection: sqlite3.Connection):
 
 
 def create_entries_table(cursor: sqlite3.Cursor):
-    create_statement = """CREATE TABLE IF NOT EXISTS WuFoo_Data(
+    create_statement = """CREATE TABLE IF NOT EXISTS WuFooData(
     EntryID INTEGER PRIMARY KEY,
     Prefix TEXT NOT NULL,
     First_Name TEXT NOT NULL,
@@ -37,7 +37,7 @@ def create_entries_table(cursor: sqlite3.Cursor):
     Fall_2022 BOOLEAN,
     Spring_2023 BOOLEAN,
     Summer_2023 BOOLEAN,
-    Other TEXT,
+    Other TEXT
     Permission_to_Share TEXT,
     dateCreated TEXT);"""
 
@@ -47,7 +47,7 @@ def create_entries_table(cursor: sqlite3.Cursor):
 
 def add_entries_to_db(cursor: sqlite3.Cursor, entries_data: list[dict]):
     # the insert or ignore syntax will insert if the primary key isn't in use or ignore if the primary key is in the DB
-    insertStatement = """INSERT OR IGNORE INTO WuFoo_Data (EntryID, Prefix, First_Name, Last_Name, Title, Org, Email, OrgWebsite,
+    insertStatement = """INSERT OR IGNORE INTO WuFooData (EntryID, Prefix, First_Name, Last_Name, Title, Org, Email, OrgWebsite,
     Phone, Course_Project, Guest_Speaker, Site_Visit, Job_Shadow, Internship, Career_Panel, Networking_Event, Summer_2022, Fall_2022, Spring_2023, Summer_2023,
     Other, Permission_to_Share, dateCreated) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
     for entry in entries_data:

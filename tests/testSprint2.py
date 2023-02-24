@@ -1,21 +1,52 @@
 import getWufooData
 import database
 import pytest
+import unittest
+from database import open_db, close_db
 
 
-def test_get_data():
-    """ for this test we are just getting the data from wufoo, getting the Entries and counting them"""
-    json_data = getWufooData.get_wufoo_data()
-    entries = json_data['Entries']
-    assert len(entries) >= 10
+class TestGetData(unittest.TestCase):
+
+    def test_get_data(self):
+        """ for this test we are just getting the data from wufoo, getting the Entries and counting them"""
+        json_data = getWufooData.get_wufoo_data()
+        entries = json_data['Entries']
+        self.assertGreaterEqual(len(entries), 10)
+
+class TestDatabase(unittest.TestCase):
+
+    def setUp(self):
+        self.connection, self.cursor = database.open_db("test.db")
+        database.create_entries_table(self.cursor)
+        entries_data = [
+            {
+                "EntryID": "1",
+                "Prefix": "Mr.",
+                "First_Name": "John",
+                "Last_Name": "Doe",
+                "Permission_to_Share": "Yes",
+                "dateCreated": "2022-02-01",
+            }
+        ]
+        database.add_entries_to_db(self.cursor, entries_data)
+
+    def tearDown(self):
+        database.close_db(self.connection)
+
+    def test_entries_table_has_data(self):
+        self.cursor.execute("SELECT COUNT(*) FROM WuFooData")
+        num_entries = self.cursor.fetchone()[0]
+        self.assertGreater(num_entries, 0)
+
+class TestDatabase(unittest.TestCase):
+
+    def test_entries_table_has_data(self):
+        conn, cursor = open_db("cubesProject.sqlite")
+        cursor.execute("SELECT COUNT(*) FROM WuFooData")
+        num_entries = cursor.fetchone()[0]
+        close_db(conn)
+        self.assertGreater(num_entries, 0)
 
 
-def test_table_created():
-    """There were several ways to do this, some of them include wrapping inserts in try/except blocks
-    but I took an easy way and just check to make sure my table is in the meta deable sqlite_master"""
-    connection, cursor = database.open_db("test.db")
-    database.create_entries_table(cursor)
-    cursor.execute("SELECT Count() FROM SQLITE_MASTER WHERE name = ?", ["WuFooData"])
-    record = cursor.fetchone()
-    number_of_rows = record[0]  # the number is the first )and only) item in the tuple
-    assert number_of_rows == 1
+if __name__ == '__main__':
+    unittest.main()
