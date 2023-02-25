@@ -1,8 +1,6 @@
-import getWufooData
-import database
-import pytest
 import unittest
-from database import open_db, close_db
+import database
+import getWufooData
 
 
 class TestGetData(unittest.TestCase):
@@ -38,15 +36,8 @@ class TestDatabase(unittest.TestCase):
         num_entries = self.cursor.fetchone()[0]
         self.assertGreater(num_entries, 0)
 
-class TestDatabase(unittest.TestCase):
-
-    def test_entries_table_has_data(self):
-        conn, cursor = open_db("cubesProject.sqlite")
-        cursor.execute("SELECT COUNT(*) FROM WuFooData")
-        num_entries = cursor.fetchone()[0]
-        close_db(conn)
-        self.assertGreater(num_entries, 0)
-
 
 if __name__ == '__main__':
     unittest.main()
+
+

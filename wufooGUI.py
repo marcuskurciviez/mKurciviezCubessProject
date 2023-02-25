@@ -1,56 +1,51 @@
 import tkinter as tk
 import sqlite3
+from tkinter import ttk
 
-db_name = "cubes_Project.sqlite"
+db_name = "cubesProject.sqlite"
 
 
-def display_data(row_id):
+def get_data():
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute(f"SELECT * FROM WuFoo_Data WHERE EntryID={row_id}")
+    cursor.execute("SELECT Org FROM WuFooData")
+    rows = cursor.fetchall()
+    conn.close()
+    return rows
+
+
+def display_data(event):
+    selected_name = name_listbox.get(name_listbox.curselection())
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM WuFooData WHERE Org=?", selected_name)
     data = cursor.fetchone()
     conn.close()
 
-    # display data however you want
+    data_str = '\n'.join([f"{key}: {value}" for key, value in zip(['EntryID', 'Prefix', 'First_Name', 'Last_Name', 'Title', 'Org', 'Email', 'OrgWebsite', 'Phone', 'Course_Project', 'Guest_Speaker', 'Site_Visit', 'Job_Shadow', 'Internship', 'Career_Panel', 'Networking_Event', 'Summer_2022', 'Fall_2022', 'Spring_2023', 'Summer_2023', 'Other', 'Permission_to_Share', 'dateCreated'], data)])
+    data_label.config(text=data_str)
 
 
-def main():
-    root = tk.Tk()
-    root.title("Data Display")
+root = tk.Tk()
+root.title("WuFooData")
 
-    # create a listbox to display the names
-    name_listbox = tk.Listbox(root)
-    name_listbox.pack(side="left")
+# Create and populate name listbox
+names = get_data()
+name_listbox = tk.Listbox(root, width=25, height=25)
+for name in names:
+    name_listbox.insert(tk.END, name)
+name_listbox.pack(side=tk.LEFT)
 
-    # populate the listbox with names from the database
-    conn = sqlite3.connect(db_name)
-    cursor = conn.cursor()
-    cursor.execute("SELECT EntryID, First_Name, Last_Name FROM WuFoo_Data")
-    for row in cursor.fetchall():
-        name_listbox.insert("end", f"{row[1]} {row[2]}")
-    conn.close()
+# Create and place scrollbar for name listbox
+scrollbar = tk.Scrollbar(root, command=name_listbox.yview)
+scrollbar.pack(side=tk.LEFT, fill=tk.Y)
+name_listbox.config(yscrollcommand=scrollbar.set)
 
-    # add a scrollbar to the listbox
-    scrollbar = tk.Scrollbar(root, command=name_listbox.yview)
-    scrollbar.pack(side="left", fill="y")
-    name_listbox.config(yscrollcommand=scrollbar.set)
+# Create and place label for displaying data
+data_label = tk.Label(root, text="", font=("Courier", 20), justify=tk.LEFT)
+data_label.pack(side=tk.LEFT, padx=20)
 
-    # when a name is clicked on, display the rest of the data for that row
-    def on_select(event):
-        selection = event.widget.curselection()
-        if selection:
-            index = selection[0]
-            row_id = name_listbox.get(index).split()[0]
-            if row_id.isdigit():
-                display_data(row_id)
-            else:
-                # handle the case where the selected name does not have a valid ID
-                print("Invalid row ID")
+# Bind click event to name listbox
+name_listbox.bind("<<ListboxSelect>>", display_data)
 
-    name_listbox.bind("<<ListboxSelect>>", on_select)
-
-    root.mainloop()
-
-
-if __name__ == "__main__":
-    main()
+root.mainloop()

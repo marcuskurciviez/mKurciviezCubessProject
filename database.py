@@ -37,7 +37,7 @@ def create_entries_table(cursor: sqlite3.Cursor):
     Fall_2022 BOOLEAN,
     Spring_2023 BOOLEAN,
     Summer_2023 BOOLEAN,
-    Other TEXT
+    Other TEXT,
     Permission_to_Share TEXT,
     dateCreated TEXT);"""
 
