@@ -25,6 +25,7 @@ def test_db_has_data():
     database.close_db(connection)
     assert count > 0, "There is no data in the table"
 
+
 def test_gui_displays_firstname_data():
     db_name = "cubesProject.sqlite"
     conn, cursor = open_db(db_name)
@@ -47,6 +48,7 @@ def test_gui_displays_firstname_data():
     root.destroy()
 
     assert first_name_gui == first_name_db
+
 
 def test_gui_displays_lastname_data():
     db_name = "cubesProject.sqlite"

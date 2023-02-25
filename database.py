@@ -41,7 +41,6 @@ def create_entries_table(cursor: sqlite3.Cursor):
     Permission_to_Share TEXT,
     dateCreated TEXT);"""
 
-
     cursor.execute(create_statement)
 
 
@@ -53,9 +52,6 @@ def add_entries_to_db(cursor: sqlite3.Cursor, entries_data: list[dict]):
         entry_values = list(
             entry.values()
         )  # get the list of values from the dictionary
-        entry_values[0] = int(
-            entry_values[0]
-        )  # convert the first value to an integer
+        entry_values[0] = int(entry_values[0])  # convert the first value to an integer
         entry_values = entry_values[:-3]
         cursor.execute(insertStatement, entry_values)
-

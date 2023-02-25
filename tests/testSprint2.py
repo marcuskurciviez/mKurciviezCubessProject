@@ -3,9 +3,9 @@ import database
 
 
 def test_get_data():
-    """ for this test we are just getting the data from wufoo, getting the Entries and counting them"""
+    """for this test we are just getting the data from wufoo, getting the Entries and counting them"""
     json_data = getWufooData.get_wufoo_data()
-    entries = json_data['Entries']
+    entries = json_data["Entries"]
     assert len(entries) >= 10
 
 

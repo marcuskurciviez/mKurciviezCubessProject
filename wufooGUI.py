@@ -22,7 +22,39 @@ def display_data(event):
     data = cursor.fetchone()
     conn.close()
 
-    data_str = '\n'.join([f"{key}: {value}" for key, value in zip(['EntryID', 'Prefix', 'First_Name', 'Last_Name', 'Title', 'Org', 'Email', 'OrgWebsite', 'Phone', 'Course_Project', 'Guest_Speaker', 'Site_Visit', 'Job_Shadow', 'Internship', 'Career_Panel', 'Networking_Event', 'Summer_2022', 'Fall_2022', 'Spring_2023', 'Summer_2023', 'Other', 'Permission_to_Share', 'dateCreated'], data)])
+    data_str = "\n".join(
+        [
+            f"{key}: {value}"
+            for key, value in zip(
+                [
+                    "EntryID",
+                    "Prefix",
+                    "First_Name",
+                    "Last_Name",
+                    "Title",
+                    "Org",
+                    "Email",
+                    "OrgWebsite",
+                    "Phone",
+                    "Course_Project",
+                    "Guest_Speaker",
+                    "Site_Visit",
+                    "Job_Shadow",
+                    "Internship",
+                    "Career_Panel",
+                    "Networking_Event",
+                    "Summer_2022",
+                    "Fall_2022",
+                    "Spring_2023",
+                    "Summer_2023",
+                    "Other",
+                    "Permission_to_Share",
+                    "dateCreated",
+                ],
+                data,
+            )
+        ]
+    )
     data_label.config(text=data_str)
 
 
@@ -49,4 +81,3 @@ data_label.pack(side=tk.LEFT, padx=20)
 name_listbox.bind("<<ListboxSelect>>", display_data)
 
 root.mainloop()
-
