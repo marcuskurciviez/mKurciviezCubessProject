@@ -29,13 +29,12 @@ def save_data(data_to_save: list, save_file=None):
     for entry in data_to_save:
         for key, value in entry.items():
             print(f"{key}: {value}", file=save_file)
-        # now print the spacer
         print(
             "+++++++++++++++++++++++++++++++++++++++++++++\n_______________________________________________",
             file=save_file,
         )
 
 
-# Press the green button in the gutter to run the script.
+# runs file
 if __name__ == "__main__":
     main()

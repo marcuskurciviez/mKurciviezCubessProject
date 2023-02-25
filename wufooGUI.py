@@ -27,17 +27,17 @@ def display_data(event):
 
 
 root = tk.Tk()
-root.title("WuFooData")
+root.title("WuFooData Viewer")
 
 # Create and populate name listbox
 names = get_data()
-name_listbox = tk.Listbox(root, width=25, height=25)
+name_listbox = tk.Listbox(root, width=25, height=25, font=("Courier", 20))
 for name in names:
     name_listbox.insert(tk.END, name)
 name_listbox.pack(side=tk.LEFT)
 
 # Create and place scrollbar for name listbox
-scrollbar = tk.Scrollbar(root, command=name_listbox.yview)
+scrollbar = tk.Scrollbar(root, width=30, command=name_listbox.yview)
 scrollbar.pack(side=tk.LEFT, fill=tk.Y)
 name_listbox.config(yscrollcommand=scrollbar.set)
 
@@ -49,3 +49,4 @@ data_label.pack(side=tk.LEFT, padx=20)
 name_listbox.bind("<<ListboxSelect>>", display_data)
 
 root.mainloop()
+

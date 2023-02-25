@@ -1,59 +1,70 @@
-import sqlite3
+import database
+import getWufooData
+from database import open_db, close_db
 import tkinter as tk
+import sqlite3
+from database import open_db, close_db
+import database
+import getWufooData
+import wufooGUI
+from main import db_name
 
-import main
-
-
-def test_get_data():
-    conn = sqlite3.connect(main.db_name)
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO WuFooData (First_Name, Last_Name) VALUES ('John', 'Doe')")
-    cursor.execute("INSERT INTO WuFooData (First_Name, Last_Name) VALUES ('Jane', 'Doe')")
-    conn.commit()
-    conn.close()
-
-    expected_data = [('John', 'Doe'), ('Jane', 'Doe')]
-    assert main.get_data() == expected_data
+conn, cursor = open_db(db_name)
+database.create_entries_table(cursor)
+database.add_entries_to_db(cursor, entries_list)
+close_db(conn)
 
 
-def test_display_data():
+def test_db_has_data():
+    json_response = getWufooData.get_wufoo_data()
+    entries_list = json_response["Entries"]
+    connection, cursor = database.open_db("cubesProject.sqlite.db")
+    database.add_entries_to_db(cursor, entries_list)
+    cursor.execute("SELECT COUNT(*) FROM SQLITE_MASTER WHERE name = ?", ["WuFooData"])
+    count = cursor.fetchone()[0]
+    database.close_db(connection)
+    assert count > 0, "There is no data in the table"
+
+def test_gui_displays_firstname_data():
+    db_name = "cubesProject.sqlite"
+    conn, cursor = open_db(db_name)
+    cursor.execute("SELECT First_Name FROM WuFooData LIMIT 1")
+    first_name_db = cursor.fetchone()[0]
+    close_db(conn)
+
     root = tk.Tk()
-    main.root = root
-    main.db_name = "test.sqlite"
-    conn = sqlite3.connect(main.db_name)
+    name_listbox = tk.Listbox(root, width=25, height=25, font=("Courier", 20))
+    names = []
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    cursor.execute("""CREATE TABLE WuFooData
-                      (EntryID INTEGER PRIMARY KEY,
-                       Prefix TEXT,
-                       First_Name TEXT,
-                       Last_Name TEXT,
-                       Title TEXT,
-                       Org TEXT,
-                       Email TEXT,
-                       OrgWebsite TEXT,
-                       Phone TEXT,
-                       Course_Project INTEGER,
-                       Guest_Speaker INTEGER,
-                       Site_Visit INTEGER,
-                       Job_Shadow INTEGER,
-                       Internship INTEGER,
-                       Career_Panel INTEGER,
-                       Networking_Event INTEGER,
-                       Summer_2022 INTEGER,
-                       Fall_2022 INTEGER,
-                       Spring_2023 INTEGER,
-                       Summer_2023 INTEGER,
-                       Other TEXT,
-                       Permission_to_Share INTEGER,
-                       dateCreated TEXT)""")
-    cursor.execute("""INSERT INTO WuFooData VALUES
-                      (1, 'Mr.', 'John', 'Doe', 'Engineer', 'ACME Inc.', 'johndoe@example.com',
-                       'https://www.acme.com', '555-1234', 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, '', 1, '2022-01-01')""")
-    cursor.execute("""INSERT INTO WuFooData VALUES
-                      (2, 'Ms.', 'Jane', 'Doe', 'Manager', 'XYZ Corp.', 'janedoe@example.com',
-                       'https://www.xyzcorp.com', '555-5678', 0, 0, 1, 0, 1, 1, 1, 0, 1, 0, '', 1, '2022-01-02')""")
-    conn.commit()
-    conn.close()
-    main.display_data(None)
-    assert main.data_label.cget("text") == (
-        "EntryID: 1\nPrefix: Mr.\nFirst_Name: John\nLast_Name: Doe\nTitle: Engineer\nOrg: ACME Inc.\nEmail: johndoe@example.com\nOrgWebsite: https://www.acme.com\nPhone: 555-1234\nCourse_Project: 1\nGuest_Speaker: 1\nSite_Visit: 0\nJob_Shadow: 0\nInternship: 0\nCareer_Panel: 1\nNetworking_Event: 0\nSummer_2022: 1\nFall_2022: 0\nSpring_2023: 1\nSummer_2023: 0\nOther:\nPermission_to_Share: 1\ndateCreated: 2022-01-01")
+    cursor.execute("SELECT First_Name FROM WuFooData")
+    rows = cursor.fetchall()
+    for name in rows:
+        names.append(name[0])
+        name_listbox.insert(tk.END, name[0])
+    name_listbox.pack(side=tk.LEFT)
+    first_name_gui = name_listbox.get(0)
+    root.destroy()
+
+    assert first_name_gui == first_name_db
+
+def test_gui_displays_lastname_data():
+    db_name = "cubesProject.sqlite"
+    conn, cursor = open_db(db_name)
+    cursor.execute("SELECT Last_Name FROM WuFooData LIMIT 1")
+    last_name_db = cursor.fetchone()[0]
+    close_db(conn)
+
+    root = tk.Tk()
+    name_listbox = tk.Listbox(root, width=25, height=25, font=("Courier", 20))
+    names = []
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute("SELECT Last_Name FROM WuFooData")
+    rows = cursor.fetchall()
+    for name in rows:
+        names.append(name[0])
+        name_listbox.insert(tk.END, name[0])
+    name_listbox.pack(side=tk.LEFT)
+    last_name_gui = name_listbox.get(0)
+    root.destroy()

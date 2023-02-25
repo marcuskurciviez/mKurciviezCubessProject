@@ -11,7 +11,7 @@ def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
 
 
 def close_db(connection: sqlite3.Connection):
-    connection.commit()  # make sure any changes get saved
+    connection.commit()  # save changes
     connection.close()
 
 
@@ -46,7 +46,6 @@ def create_entries_table(cursor: sqlite3.Cursor):
 
 
 def add_entries_to_db(cursor: sqlite3.Cursor, entries_data: list[dict]):
-    # the insert or ignore syntax will insert if the primary key isn't in use or ignore if the primary key is in the DB
     insertStatement = """INSERT OR IGNORE INTO WuFooData (EntryID, Prefix, First_Name, Last_Name, Title, Org, Email, OrgWebsite,
     Phone, Course_Project, Guest_Speaker, Site_Visit, Job_Shadow, Internship, Career_Panel, Networking_Event, Summer_2022, Fall_2022, Spring_2023, Summer_2023,
     Other, Permission_to_Share, dateCreated) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"""
@@ -56,6 +55,7 @@ def add_entries_to_db(cursor: sqlite3.Cursor, entries_data: list[dict]):
         )  # get the list of values from the dictionary
         entry_values[0] = int(
             entry_values[0]
-        )  # the EntryID is a string, but I want it to be a number
+        )  # convert the first value to an integer
         entry_values = entry_values[:-3]
         cursor.execute(insertStatement, entry_values)
+
