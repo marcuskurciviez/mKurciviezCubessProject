@@ -8,6 +8,7 @@ For this project, I have used the following libraries in my code:
 * from requests.auth import HTTPBasicAuth
 * import tkinter as tk
 * import sqlite3
+* from tkinter import messagebox
 
 ### Brief Description:
 The main.py will run the database code, as well as open the main GUI from the MainCUBESSGui.py file, in which it will display four buttons:
