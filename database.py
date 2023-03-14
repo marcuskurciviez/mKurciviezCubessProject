@@ -43,6 +43,15 @@ def create_entries_table(cursor: sqlite3.Cursor):
 
     cursor.execute(create_statement)
 
+    # Create a new table called "users"
+    create_users_table_statement = """CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    title TEXT,
+    bsu_email TEXT NOT NULL,
+    department TEXT);"""
+    cursor.execute(create_users_table_statement)
 
 def add_entries_to_db(cursor: sqlite3.Cursor, entries_data: list[dict]):
     insertStatement = """INSERT OR IGNORE INTO WuFooData (EntryID, Prefix, First_Name, Last_Name, Title, Org, Email, OrgWebsite,

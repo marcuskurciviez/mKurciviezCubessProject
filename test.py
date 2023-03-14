@@ -1,4 +1,7 @@
+import sqlite3
 import tkinter as tk
+from tkinter import messagebox
+import tkinter.messagebox as tkmb
 
 
 # Function to open the "Add User" window
@@ -42,11 +45,24 @@ def open_add_user_window():
         email = email_entry.get()
         department = department_entry.get()
 
-        # Add the new user to the database
-        # TODO: add your code here
+        # Check if email already exists in users table
+        conn = sqlite3.connect("cubesProject.sqlite")
+        c = conn.cursor()
+        c.execute("SELECT * FROM users WHERE bsu_email=?", (email,))
+        result = c.fetchone()
 
-        # Close the window
-        add_user_window.destroy()
+        if result:
+            # Display error message if email already exists
+            tkmb.showerror("Error", "The user with the same email has already submitted a proposal.")
+        else:
+            # Add the new user to the database
+            c.execute("INSERT INTO users (first_name, last_name, title, bsu_email, department) VALUES (?, ?, ?, ?, ?)",
+                      (first_name, last_name, title, email, department))
+            conn.commit()
+            conn.close()
+
+            # Close the window
+            add_user_window.destroy()
 
     # Create a button to add the new user
     add_button = tk.Button(add_user_window, text="Add User", font=("Arial", 12), command=add_user)
