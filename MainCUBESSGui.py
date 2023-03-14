@@ -2,6 +2,8 @@ import sqlite3
 import tkinter as tk
 from tkinter import messagebox
 import tkinter.messagebox as tkmb
+import getWufooData
+from database import close_db, add_entries_to_db, open_db
 
 
 # Function to open the "Add User" window
@@ -76,6 +78,38 @@ def open_data_visualization_window():
     data_visualization_window.title("WuFooData Viewer")
     exec(open("wufooGUI.py").read(), globals())
 
+def refresh_data():
+    data = getWufooData.get_wufoo_data()
+    entries_data = data["Entries"]
+    conn, cursor = open_db("cubesProject.sqlite")
+    add_entries_to_db(cursor, entries_data)
+    close_db(conn)
+
+    messagebox.showinfo("Success", "Data has been refreshed")
+
+def open_user_table_window():
+    # Create a new window for displaying the user table data
+    user_table_window = tk.Toplevel(root)
+    user_table_window.title("User Table")
+
+    # Connect to the database and retrieve all data from the "users" table
+    conn = sqlite3.connect("cubesProject.sqlite")
+    c = conn.cursor()
+    c.execute("SELECT * FROM users")
+    rows = c.fetchall()
+
+    # Create a table to display the data in the new window
+    table = tk.Frame(user_table_window)
+    table.pack(padx=10, pady=10)
+
+    # Add the data to the table
+    for i, row in enumerate(rows):
+        for j, value in enumerate(row):
+            label = tk.Label(table, text=value)
+            label.grid(row=i, column=j)
+
+    # Close the database connection
+    conn.close()
 
 # Create the main window
 root = tk.Tk()
@@ -100,11 +134,11 @@ add_user_button = tk.Button(button_frame, text="Add User", font=("Arial", 12), p
 add_user_button.pack(side=tk.LEFT, padx=10)
 
 # Create the "Refresh Data" button
-refresh_data_button = tk.Button(button_frame, text="Refresh Data", font=("Arial", 12), padx=10, pady=5)
+refresh_data_button = tk.Button(button_frame, text="Refresh Data", font=("Arial", 12), padx=10, pady=5, command=refresh_data)
 refresh_data_button.pack(side=tk.LEFT, padx=10)
 
 # Create the "Claim" button
-claim_button = tk.Button(button_frame, text="Claim", font=("Arial", 12), padx=10, pady=5)
+claim_button = tk.Button(button_frame, text="Claim", font=("Arial", 12), padx=10, pady=5, command=open_user_table_window)
 claim_button.pack(side=tk.LEFT, padx=10)
 
 # Create the "Data Visualization" button

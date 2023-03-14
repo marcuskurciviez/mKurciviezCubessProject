@@ -1,6 +1,5 @@
 import tkinter as tk
 import sqlite3
-from tkinter import ttk
 
 db_name = "cubesProject.sqlite"
 

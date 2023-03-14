@@ -1,6 +1,8 @@
 import sqlite3
 from typing import Tuple
 
+from getWufooData import get_wufoo_data
+
 
 def open_db(filename: str) -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
     db_connection = sqlite3.connect(
@@ -52,6 +54,10 @@ def create_entries_table(cursor: sqlite3.Cursor):
     bsu_email TEXT NOT NULL,
     department TEXT);"""
     cursor.execute(create_users_table_statement)
+
+def update_entries_table(cursor: sqlite3.Cursor):
+    entries_data = get_wufoo_data()["Entries"]
+    add_entries_to_db(cursor, entries_data)
 
 def add_entries_to_db(cursor: sqlite3.Cursor, entries_data: list[dict]):
     insertStatement = """INSERT OR IGNORE INTO WuFooData (EntryID, Prefix, First_Name, Last_Name, Title, Org, Email, OrgWebsite,
